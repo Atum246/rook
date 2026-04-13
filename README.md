@@ -20,7 +20,7 @@ No credit card. No DevOps. No headaches.
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [How It Works](#-how-people-use-it) • [API](#-api) • [Contributing](#-contributing)
+[Features](#-features) • [Quick Start](#-quick-start) • [Deploy Online](#-deploy-online-recommended-) • [How It Works](#-how-people-use-it) • [API](#-api) • [Contributing](#-contributing)
 
 </div>
 
@@ -92,6 +92,88 @@ npm run frontend:dev     # Frontend → http://localhost:3000
 ```
 
 Open **http://localhost:3000** and you're in! ♜
+
+---
+
+## 🌐 Deploy Online (Recommended!) ☁️
+
+Running Rook locally means your computer must stay ON. **Deploy to Render instead — it's free and runs 24/7!**
+
+### Step 1: Get a MongoDB Connection String 🗄️
+
+1. Go to [MongoDB Atlas](https://cloud.mongodb.com) and sign up (free)
+2. Click **"Create"** → Choose **"M0 Free Shared Cluster"**
+3. Go to **"Network Access"** → Click **"Add IP Address"** → Select **"Allow Access from Anywhere"** (0.0.0.0/0)
+4. Go to **"Database Access"** → Click **"Add New Database User"**
+   - Username: `rook`
+   - Password: generate a secure one (save it!)
+   - Role: **Read and write to any database**
+5. Go to **"Database"** → Click **"Connect"** → **"Drivers"**
+6. Copy the connection string — it looks like:
+   ```
+   mongodb+srv://rook:YOUR_PASSWORD@cluster.xxxxx.mongodb.net/rook?retryWrites=true&w=majority
+   ```
+7. Replace `<password>` with your actual password
+
+### Step 2: Fork This Repo 🍴
+
+1. Go to [github.com/Atum246/rook](https://github.com/Atum246/rook)
+2. Click **"Fork"** (top right)
+3. Done! You now have your own copy
+
+### Step 3: Deploy to Render 🚀
+
+1. Go to [Render.com](https://render.com) and sign up (free)
+2. Click **"New +"** → **"Web Service"**
+3. Click **"Connect"** next to your GitHub account
+4. Find and select **your fork of rook**
+5. Fill in the settings:
+
+   | Field | Value |
+   |-------|-------|
+   | **Name** | `rook` (or anything you want) |
+   | **Region** | Pick the one closest to you |
+   | **Branch** | `main` |
+   | **Runtime** | `Node` |
+   | **Build Command** | `npm install && cd frontend && npm install && npm run build && cd ..` |
+   | **Start Command** | `npm start` |
+   | **Plan** | `Free` |
+
+6. Click **"Advanced"** and add these **Environment Variables**:
+
+   | Key | Value |
+   |-----|-------|
+   | `MONGODB_URI` | Your MongoDB connection string (from Step 1) |
+   | `JWT_SECRET` | Any random string, e.g. `my-super-secret-rook-key-2026` |
+   | `NODE_ENV` | `production` |
+   | `PORT` | `10000` |
+
+7. Click **"Create Web Service"**
+8. Wait 3-5 minutes for the build to complete ⏳
+
+### Step 4: Keep It Awake (Important!) ⏰
+
+Render kills free apps after 15 minutes of inactivity. Fix this:
+
+1. Copy your Render URL (e.g., `https://rook-xxxx.onrender.com`)
+2. Go to [Cron-job.org](https://cron-job.org) and sign up (free)
+3. Click **"Create cronjob"**
+4. Fill in:
+   - **Title:** `Keep Rook Awake`
+   - **URL:** Your Render URL (e.g., `https://rook-xxxx.onrender.com/api/health`)
+   - **Schedule:** Every **5 minutes**
+5. Click **"Create cronjob"**
+6. Done! Your Rook is now awake 24/7! 🎉
+
+### Step 5: Open Your Rook! 🎉
+
+1. Open your Render URL in a browser
+2. You'll see the Rook login page
+3. Sign up → Connect your API keys → Deploy agents!
+
+### 🎉 You're Live!
+
+Your Rook dashboard is now running 24/7 for $0. Share the URL with your team or keep it private — it's yours! ♜
 
 ---
 
