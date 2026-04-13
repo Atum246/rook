@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: rook-mongo
+    restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rook
+      MONGO_INITDB_ROOT_PASSWORD: rookpassword
+
+  rook:
+    build: .
+    container_name: rook-app
+    restart: unless-stopped
+    ports:
+      - "10000:10000"
+    depends_on:
+      - mongodb
+    environment:
+      NODE_ENV: production
+      PORT: 10000
+      MONGODB_URI: mongodb://rook:rookpassword@mongodb:27017/rook?authSource=admin
+      JWT_SECRET: change-this-to-a-random-secret
+
+volumes:
+  mongodb_data:

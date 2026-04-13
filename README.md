@@ -19,8 +19,9 @@ No credit card. No DevOps. No headaches.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](#-deploy-with-docker)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Deploy Online](#-deploy-online-recommended-) • [How It Works](#-how-people-use-it) • [API](#-api) • [Contributing](#-contributing)
+[Features](#-features) • [Quick Start](#-quick-start) • [Deploy Online](#-deploy-online) • [How It Works](#-how-people-use-it) • [API](#-api) • [Contributing](#-contributing)
 
 </div>
 
@@ -58,6 +59,7 @@ Behind the scenes, Rook handles ALL the boring infrastructure stuff so you can f
 
 ### 💎 Developer Friendly
 - **🏗️ Full REST API** — Integrate with anything
+- **🐳 Docker Ready** — One command to run everything
 - **⚡ Modern Stack** — Express + Next.js + Tailwind
 - **🔓 Open Source** — MIT license, fork it, own it
 
@@ -73,7 +75,7 @@ Behind the scenes, Rook handles ALL the boring infrastructure stuff so you can f
 
 ```bash
 # Clone
-git clone https://github.com/your-username/rook.git
+git clone https://github.com/Atum246/rook.git
 cd rook
 
 # Install backend
@@ -95,85 +97,216 @@ Open **http://localhost:3000** and you're in! ♜
 
 ---
 
-## 🌐 Deploy Online (Recommended!) ☁️
+## 🐳 Deploy with Docker
 
-Running Rook locally means your computer must stay ON. **Deploy to Render instead — it's free and runs 24/7!**
+The fastest way to run Rook — just one command:
 
-### Step 1: Get a MongoDB Connection String 🗄️
+```bash
+# Clone and start everything (Rook + MongoDB)
+git clone https://github.com/Atum246/rook.git
+cd rook
 
-1. Go to [MongoDB Atlas](https://cloud.mongodb.com) and sign up (free)
-2. Click **"Create"** → Choose **"M0 Free Shared Cluster"**
-3. Go to **"Network Access"** → Click **"Add IP Address"** → Select **"Allow Access from Anywhere"** (0.0.0.0/0)
-4. Go to **"Database Access"** → Click **"Add New Database User"**
-   - Username: `rook`
-   - Password: generate a secure one (save it!)
-   - Role: **Read and write to any database**
-5. Go to **"Database"** → Click **"Connect"** → **"Drivers"**
-6. Copy the connection string — it looks like:
-   ```
-   mongodb+srv://rook:YOUR_PASSWORD@cluster.xxxxx.mongodb.net/rook?retryWrites=true&w=majority
-   ```
-7. Replace `<password>` with your actual password
+# Edit docker-compose.yml → change JWT_SECRET to something random
+# Then start:
+docker-compose up -d
 
-### Step 2: Fork This Repo 🍴
+# Open http://localhost:10000
+```
 
-1. Go to [github.com/Atum246/rook](https://github.com/Atum246/rook)
-2. Click **"Fork"** (top right)
-3. Done! You now have your own copy
+That's it. Rook + MongoDB running in containers. 🐳🎉
 
-### Step 3: Deploy to Render 🚀
+> ⚠️ Remember to change `JWT_SECRET` in `docker-compose.yml` before deploying!
 
-1. Go to [Render.com](https://render.com) and sign up (free)
-2. Click **"New +"** → **"Web Service"**
-3. Click **"Connect"** next to your GitHub account
-4. Find and select **your fork of rook**
-5. Fill in the settings:
+---
+
+## 🌐 Deploy Online
+
+Running Rook locally means your computer must stay ON. **Deploy online instead — it's free and runs 24/7!**
+
+### 📋 Prerequisites (Same for ALL Platforms)
+
+Before deploying to ANY platform, you need:
+
+1. **A MongoDB connection string** 🗄️
+   - Go to [MongoDB Atlas](https://cloud.mongodb.com) (free)
+   - Create an **M0 Free Shared Cluster**
+   - Under **Network Access** → Add IP → Allow Access from Anywhere (0.0.0.0/0)
+   - Under **Database Access** → Create a user (save username + password!)
+   - Click **Connect** → **Drivers** → Copy the SRV connection string
+   - Replace `<password>` with your actual password
+
+2. **A JWT Secret** 🔐
+   - Any random string, e.g. `my-super-secret-rook-key-2026`
+   - Use a password generator for production!
+
+### Environment Variables (Same for ALL Platforms)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | ✅ Yes | Your MongoDB Atlas connection string |
+| `JWT_SECRET` | ✅ Yes | Random secret for auth tokens |
+| `NODE_ENV` | ✅ Yes | Set to `production` |
+| `PORT` | ✅ Yes | Set to `10000` (or platform default) |
+
+---
+
+### Option 1: Render.com 🚀 (Recommended — Free)
+
+1. Fork this repo on GitHub
+2. Go to [Render.com](https://render.com) → Sign up (free)
+3. Click **New +** → **Web Service** → Connect your fork
+4. Settings:
 
    | Field | Value |
    |-------|-------|
-   | **Name** | `rook` (or anything you want) |
-   | **Region** | Pick the one closest to you |
-   | **Branch** | `main` |
-   | **Runtime** | `Node` |
-   | **Build Command** | `npm install && cd frontend && npm install && npm run build && cd ..` |
-   | **Start Command** | `npm start` |
-   | **Plan** | `Free` |
+   | Name | `rook` |
+   | Region | Closest to you |
+   | Branch | `main` |
+   | Build Command | `npm install && cd frontend && npm install && npm run build && cd ..` |
+   | Start Command | `npm start` |
+   | Plan | Free |
 
-6. Click **"Advanced"** and add these **Environment Variables**:
+5. Add environment variables (from the table above)
+6. Click **Create Web Service** → Wait 3-5 min ⏳
 
-   | Key | Value |
-   |-----|-------|
-   | `MONGODB_URI` | Your MongoDB connection string (from Step 1) |
-   | `JWT_SECRET` | Any random string, e.g. `my-super-secret-rook-key-2026` |
-   | `NODE_ENV` | `production` |
-   | `PORT` | `10000` |
+**⏰ Keep-alive setup:**
+- Go to [Cron-job.org](https://cron-job.org) (free)
+- Create a job that pings your Render URL every 5 minutes
+- URL: `https://your-app.onrender.com/api/health`
 
-7. Click **"Create Web Service"**
-8. Wait 3-5 minutes for the build to complete ⏳
+---
 
-### Step 4: Keep It Awake (Important!) ⏰
+### Option 2: Railway 🚂 (Free $5/month credit)
 
-Render kills free apps after 15 minutes of inactivity. Fix this:
+1. Fork this repo
+2. Go to [Railway.app](https://railway.app) → Sign up with GitHub
+3. Click **New Project** → **Deploy from GitHub repo** → Select your fork
+4. Add a **MongoDB** plugin (Railway has built-in MongoDB!)
+5. Set environment variables:
+   - `MONGODB_URI` → Railway auto-provides this as `${{MongoDB.MONGO_URL}}`
+   - `JWT_SECRET` → Your random secret
+   - `NODE_ENV` → `production`
+   - `PORT` → Railway auto-provides `${{PORT}}`
+6. Add a **Start Command** override: `npm start`
+7. Deploy! 🚀
 
-1. Copy your Render URL (e.g., `https://rook-xxxx.onrender.com`)
-2. Go to [Cron-job.org](https://cron-job.org) and sign up (free)
-3. Click **"Create cronjob"**
-4. Fill in:
-   - **Title:** `Keep Rook Awake`
-   - **URL:** Your Render URL (e.g., `https://rook-xxxx.onrender.com/api/health`)
-   - **Schedule:** Every **5 minutes**
-5. Click **"Create cronjob"**
-6. Done! Your Rook is now awake 24/7! 🎉
+> 💡 Railway keeps your app awake automatically — no cron-job needed!
 
-### Step 5: Open Your Rook! 🎉
+---
 
-1. Open your Render URL in a browser
-2. You'll see the Rook login page
-3. Sign up → Connect your API keys → Deploy agents!
+### Option 3: Fly.io 🪰 (Free tier available)
 
-### 🎉 You're Live!
+1. Install Fly CLI: `curl -L https://fly.io/install.sh | sh`
+2. Fork and clone this repo
+3. Run:
+   ```bash
+   cd rook
+   fly launch
+   # Follow prompts → Select Node.js
+   # Say NO to Postgres (we use MongoDB)
+   # Say NO to Redis
+   ```
+4. Set secrets:
+   ```bash
+   fly secrets set MONGODB_URI="your-mongodb-uri"
+   fly secrets set JWT_SECRET="your-random-secret"
+   fly secrets set NODE_ENV="production"
+   ```
+5. Deploy:
+   ```bash
+   fly deploy
+   ```
 
-Your Rook dashboard is now running 24/7 for $0. Share the URL with your team or keep it private — it's yours! ♜
+> 💡 Fly.io has a generous free tier — 3 shared VMs, no sleep!
+
+---
+
+### Option 4: DigitalOcean App Platform 🌊 ($200 free credit!)
+
+1. Fork this repo
+2. Go to [DigitalOcean](https://digitalocean.com) → **App Platform**
+3. Click **Create App** → Connect GitHub → Select your fork
+4. Configure:
+   - Source Directory: `/`
+   - Build Command: `npm install && cd frontend && npm install && npm run build && cd ..`
+   - Run Command: `npm start`
+5. Add environment variables
+6. Deploy! 🚀
+
+> 💡 DigitalOcean gives $200 free credit for 60 days when you sign up!
+
+---
+
+### Option 5: Vercel + External Backend 🟢
+
+Vercel handles the frontend, deploy the backend separately:
+
+**Frontend on Vercel:**
+1. Fork this repo
+2. Go to [Vercel](https://vercel.com) → Import your fork
+3. Set Root Directory to `frontend`
+4. Set Build Command to `npm run build`
+5. Set Environment Variable: `NEXT_PUBLIC_API_URL` = your backend URL
+
+**Backend on Render/Railway:**
+- Deploy just the backend (root `server.js`) to Render or Railway
+- Follow the same steps as above but only for the backend
+
+---
+
+### Option 6: Any VPS (DigitalOcean Droplet, Linode, etc.) 🖥️
+
+For full control — $5/month VPS:
+
+```bash
+# SSH into your server
+ssh root@your-server-ip
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt-get install -y nodejs
+
+# Install MongoDB
+apt-get install -y mongodb
+
+# Clone and setup
+git clone https://github.com/Atum246/rook.git
+cd rook
+npm install
+cd frontend && npm install && npm run build && cd ..
+
+# Configure
+cp .env.example .env
+nano .env  # Add your MONGODB_URI, JWT_SECRET, NODE_ENV=production, PORT=10000
+
+# Install PM2 (process manager)
+npm install -g pm2
+
+# Start
+pm2 start server.js --name rook
+pm2 startup
+pm2 save
+
+# Open firewall
+ufw allow 10000
+
+# Done! Visit http://your-server-ip:10000
+```
+
+> 💡 Use Nginx as a reverse proxy + Let's Encrypt for free HTTPS!
+
+---
+
+### 📊 Platform Comparison
+
+| Platform | Free? | Always On? | Difficulty | Best For |
+|----------|-------|-----------|------------|----------|
+| 🚀 Render | ✅ Free | ⏰ Needs cron | ⭐ Easy | Beginners |
+| 🚂 Railway | ✅ $5 credit | ✅ Yes | ⭐ Easy | Best free option |
+| 🪰 Fly.io | ✅ Free | ✅ Yes | ⭐⭐ Medium | Developers |
+| 🌊 DigitalOcean | 💰 $200 credit | ✅ Yes | ⭐⭐ Medium | Growing projects |
+| 🟢 Vercel | ✅ Free | ✅ Yes | ⭐⭐⭐ Split setup | Frontend-focused |
+| 🖥️ VPS | 💰 $5/mo | ✅ Yes | ⭐⭐⭐ Full control | Production |
 
 ---
 
@@ -210,6 +343,34 @@ Rook handles the rest:
 Your agent is live! Chat with it directly from the Rook dashboard, or connect Telegram/WhatsApp.
 
 ### That's it. No YAML. No Dockerfiles. No CLI magic. ♜
+
+---
+
+## 🔧 Troubleshooting
+
+### "Cannot connect to MongoDB"
+- Make sure you whitelisted `0.0.0.0/0` in MongoDB Atlas Network Access
+- Check your connection string has the correct password
+- Ensure the database user has `readWrite` role
+
+### "Render app keeps sleeping"
+- Set up Cron-job.org to ping `/api/health` every 5 minutes
+- Make sure the cron job URL is correct (use HTTPS)
+
+### "Build failed on Render"
+- Check build logs in Render dashboard
+- Ensure Build Command is exactly: `npm install && cd frontend && npm install && npm run build && cd ..`
+- Make sure you're on Node 18+
+
+### "Frontend shows blank page"
+- Check browser console for errors
+- Make sure `NODE_ENV=production` is set
+- Rebuild the frontend: `cd frontend && npm run build`
+
+### "Agent won't deploy"
+- Verify your OpenRouter API key is valid
+- Check your Render API key has correct permissions
+- Look at the Rook server logs for error details
 
 ---
 
@@ -289,6 +450,8 @@ rook/
 ├── server.js                   # Express server entry
 ├── package.json                # Backend dependencies
 ├── .env.example                # Config template
+├── Dockerfile                  # Docker image
+├── docker-compose.yml          # Docker Compose (Rook + MongoDB)
 │
 ├── models/                     # Database schemas
 │   ├── User.js                 #   User with encrypted keys
@@ -346,7 +509,7 @@ We love contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ```bash
 # Quick start for contributors
-git clone https://github.com/your-username/rook.git
+git clone https://github.com/Atum246/rook.git
 cd rook
 npm install
 cd frontend && npm install && cd ..
@@ -372,13 +535,19 @@ A: Nope! All services (OpenRouter, Render, MongoDB Atlas, Cron-job.org) have fre
 A: Rook uses MongoDB Atlas for persistent storage + Cron-job.org to prevent sleeping.
 
 **Q: Can I use my own domain?**  
-A: Yes! Render supports custom domains on all plans.
+A: Yes! All platforms support custom domains.
 
 **Q: Is my data safe?**  
 A: All API keys are encrypted with AES before storage. We never see your keys in plain text.
 
 **Q: Can I self-host Rook?**  
 A: Absolutely. That's the whole point. It's yours.
+
+**Q: Do I need Docker?**  
+A: No! Docker is optional. You can run Rook directly with Node.js too.
+
+**Q: Which platform should I pick?**  
+A: Beginners → Render. Best free option → Railway. Full control → VPS.
 
 ---
 

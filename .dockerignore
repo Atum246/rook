@@ -1,0 +1,10 @@
+node_modules
+.next
+.env
+logs
+*.log
+.git
+.github
+GITHUB_SETTINGS.md
+CHANGELOG.md
+CONTRIBUTING.md
