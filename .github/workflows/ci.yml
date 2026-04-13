@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check syntax
+        run: |
+          node -e "require('./utils/logger')"
+          node -e "require('./utils/crypto')"
+          node -e "require('./middleware/auth')"
+          node -e "require('./models/User')"
+          node -e "require('./models/Agent')"
+          node -e "require('./services/renderService')"
+          node -e "require('./services/mongoAtlasService')"
+          node -e "require('./services/cronjobService')"
+          node -e "require('./services/openrouterService')"
+          node -e "require('./services/deployService')"
+          node -e "require('./services/healthMonitor')"
+          echo "✅ All modules pass syntax check"
+
+  frontend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Check output
+        run: |
+          ls -la frontend/.next/
+          echo "✅ Frontend builds successfully"
